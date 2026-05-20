@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>APSYLab — AiInPsychology(Ψ)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #080C12;
+    --bg-surface: #0F1520;
+    --bg-card: #141C2A;
+    --bg-card-hover: #1A2438;
+    --teal: #1D9E75;
+    --teal-light: #2DC992;
+    --teal-dim: rgba(29,158,117,0.12);
+    --amber: #E8960F;
+    --amber-light: #F5A820;
+    --amber-dim: rgba(232,150,15,0.12);
+    --text: #DDE3EE;
+    --text-muted: #6E7D96;
+    --text-faint: #3A4558;
+    --border: rgba(255,255,255,0.06);
+    --border-teal: rgba(29,158,117,0.3);
+    --border-amber: rgba(232,150,15,0.3);
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans: 'Outfit', system-ui, sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 4rem;
+    background: rgba(8,12,18,0.82);
+    backdrop-filter: blur(18px);
+    border-bottom: 0.5px solid var(--border);
+  }
+  .nav-brand {
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .nav-psi {
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--teal);
+    line-height: 1;
+  }
+  .nav-name {
+    display: flex; flex-direction: column; gap: 0;
+  }
+  .nav-name span:first-child {
+    font-weight: 600; font-size: 0.95rem; letter-spacing: 0.04em;
+    color: var(--text);
+  }
+  .nav-name span:last-child {
+    font-size: 0.7rem; font-weight: 300; color: var(--text-muted);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .nav-links {
+    display: flex; gap: 2.5rem; align-items: center;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.85rem; font-weight: 400; color: var(--text-muted);
+    letter-spacing: 0.03em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    background: var(--teal);
+    color: #fff !important;
+    padding: 0.45rem 1.25rem;
+    border-radius: 4px;
+    font-weight: 500 !important;
+    font-size: 0.82rem !important;
+    letter-spacing: 0.04em;
+    transition: background 0.2s !important;
+  }
+  .nav-cta:hover { background: var(--teal-light) !important; }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 8rem 2rem 4rem;
+    position: relative; overflow: hidden;
+    text-align: center;
+  }
+  .hero-grid-bg {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(var(--text-faint) 0.5px, transparent 0.5px),
+      linear-gradient(90deg, var(--text-faint) 0.5px, transparent 0.5px);
+    background-size: 60px 60px;
+    opacity: 0.25;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
+  }
+  .hero-glow {
+    position: absolute;
+    width: 700px; height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(29,158,117,0.08) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -60%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--teal-dim);
+    border: 0.5px solid var(--border-teal);
+    padding: 0.35rem 1rem;
+    border-radius: 100px;
+    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.08em;
+    color: var(--teal-light);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    position: relative; z-index: 1;
+  }
+  .hero-badge-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--teal-light);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+  .hero-psi {
+    font-family: var(--serif);
+    font-size: clamp(6rem, 15vw, 13rem);
+    font-weight: 300;
+    line-height: 0.9;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(29,158,117,0.4);
+    background: linear-gradient(135deg, rgba(29,158,117,0.6), rgba(232,150,15,0.3));
+    -webkit-background-clip: text;
+    background-clip: text;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -55%);
+    pointer-events: none;
+    z-index: 0;
+    user-select: none;
+  }
+  .hero-content { position: relative; z-index: 1; max-width: 800px; }
+  .hero-eyebrow {
+    font-size: 0.8rem; font-weight: 400; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+  .hero-title {
+    font-family: var(--serif);
+    font-size: clamp(2.8rem, 6vw, 5.5rem);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--teal-light);
+  }
+  .hero-subtitle {
+    font-size: 1.05rem; font-weight: 300; color: var(--text-muted);
+    max-width: 560px; margin: 0 auto 2.5rem;
+    line-height: 1.8;
+  }
+  .hero-actions {
+    display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+  }
+  .btn-primary {
+    background: var(--teal);
+    color: #fff;
+    padding: 0.75rem 2rem;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    border: none; cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-primary:hover { background: var(--teal-light); transform: translateY(-1px); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    padding: 0.75rem 2rem;
+    border-radius: 4px;
+    font-weight: 400;
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    border: 0.5px solid var(--border);
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+  .btn-secondary:hover { border-color: var(--text-muted); transform: translateY(-1px); }
+  .hero-stats {
+    display: flex; gap: 3rem; justify-content: center;
+    margin-top: 4rem;
+    position: relative; z-index: 1;
+  }
+  .hero-stat { text-align: center; }
+  .hero-stat-num {
+    font-family: var(--serif);
+    font-size: 2.2rem; font-weight: 600; color: var(--teal);
+    line-height: 1;
+  }
+  .hero-stat-label {
+    font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.1em;
+    text-transform: uppercase; margin-top: 0.3rem;
+  }
+
+  /* ─── SECTION COMMON ─── */
+  section { padding: 6rem 2rem; }
+  .container { max-width: 1100px; margin: 0 auto; }
+  .section-label {
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--teal);
+    margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .section-label::before {
+    content: '';
+    display: block; width: 28px; height: 1px;
+    background: var(--teal);
+  }
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 300;
+    line-height: 1.2;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+  .section-desc {
+    font-size: 1rem; color: var(--text-muted); max-width: 560px;
+    line-height: 1.8; font-weight: 300;
+    margin-bottom: 3rem;
+  }
+
+  /* ─── MISSION BAND ─── */
+  .mission-band {
+    background: var(--bg-surface);
+    border-top: 0.5px solid var(--border);
+    border-bottom: 0.5px solid var(--border);
+    padding: 3rem 2rem;
+    overflow: hidden;
+    position: relative;
+  }
+  .mission-band-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 3rem; align-items: center;
+  }
+  .mission-quote {
+    font-family: var(--serif);
+    font-size: clamp(1.3rem, 2.5vw, 1.9rem);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--text);
+    line-height: 1.5;
+    border-left: 2px solid var(--teal);
+    padding-left: 1.5rem;
+  }
+  .mission-quote span { color: var(--teal-light); }
+  .mission-text {
+    font-size: 0.95rem; color: var(--text-muted); line-height: 1.85;
+    font-weight: 300;
+  }
+  .mission-text strong { color: var(--text); font-weight: 500; }
+
+  /* ─── VERTICALS ─── */
+  .verticals-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .vertical-card {
+    background: var(--bg-card);
+    padding: 2rem;
+    transition: background 0.25s;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+  .vertical-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--teal-accent, var(--teal)), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .vertical-card:hover { background: var(--bg-card-hover); }
+  .vertical-card:hover::before { opacity: 1; }
+  .vertical-icon {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    display: block;
+    font-family: var(--serif);
+    color: var(--teal);
+  }
+  .vertical-num {
+    font-size: 0.65rem; font-weight: 500; letter-spacing: 0.15em;
+    color: var(--text-faint); text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .vertical-name {
+    font-size: 1.05rem; font-weight: 500; color: var(--text);
+    margin-bottom: 0.75rem; line-height: 1.3;
+  }
+  .vertical-desc {
+    font-size: 0.85rem; color: var(--text-muted); line-height: 1.7; font-weight: 300;
+  }
+  .vertical-tags {
+    display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 1rem;
+  }
+  .vertical-tag {
+    font-size: 0.65rem; font-weight: 500; letter-spacing: 0.08em;
+    padding: 0.2rem 0.6rem; border-radius: 3px;
+    background: var(--teal-dim); color: var(--teal-light);
+    border: 0.5px solid var(--border-teal);
+    text-transform: uppercase;
+  }
+  .vertical-tag.amber {
+    background: var(--amber-dim); color: var(--amber-light);
+    border-color: var(--border-amber);
+  }
+
+  /* ─── HOW IT WORKS ─── */
+  .how-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  .how-card {
+    background: var(--bg-surface);
+    border: 0.5px solid var(--border);
+    border-radius: 8px;
+    padding: 2rem;
+  }
+  .how-card-label {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.14em;
+    text-transform: uppercase; padding: 0.3rem 0.8rem;
+    border-radius: 100px; margin-bottom: 1.5rem;
+  }
+  .how-card-label.teal { background: var(--teal-dim); color: var(--teal-light); border: 0.5px solid var(--border-teal); }
+  .how-card-label.amber { background: var(--amber-dim); color: var(--amber-light); border: 0.5px solid var(--border-amber); }
+  .how-card-title { font-size: 1.1rem; font-weight: 500; color: var(--text); margin-bottom: 1.25rem; }
+  .how-steps { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+  .how-step {
+    display: flex; gap: 0.75rem; align-items: flex-start;
+    font-size: 0.9rem; color: var(--text-muted); line-height: 1.6;
+  }
+  .how-step-num {
+    min-width: 22px; height: 22px;
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem; font-weight: 600;
+    color: var(--teal); margin-top: 0.1rem;
+  }
+
+  /* ─── COMMUNITY FEATURES ─── */
+  .features-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;
+  }
+  .feature-card {
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: 8px; padding: 1.75rem;
+    transition: border-color 0.25s, background 0.25s;
+  }
+  .feature-card:hover { border-color: var(--border-teal); background: var(--bg-card-hover); }
+  .feature-card.wide { grid-column: span 2; }
+  .feature-icon-wrap {
+    width: 40px; height: 40px;
+    background: var(--teal-dim);
+    border: 0.5px solid var(--border-teal);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1rem;
+    font-size: 1.1rem; color: var(--teal-light);
+    font-family: var(--serif); font-weight: 600;
+  }
+  .feature-title { font-size: 0.95rem; font-weight: 500; color: var(--text); margin-bottom: 0.5rem; }
+  .feature-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.7; font-weight: 300; }
+
+  /* ─── RESEARCH FLOW ─── */
+  .flow-row {
+    display: flex; align-items: center; gap: 0;
+    margin-top: 2.5rem;
+  }
+  .flow-node {
+    flex: 1;
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: 8px; padding: 1.25rem;
+    text-align: center;
+  }
+  .flow-node-icon {
+    font-family: var(--serif); font-size: 1.5rem; color: var(--teal);
+    display: block; margin-bottom: 0.5rem;
+  }
+  .flow-node-title { font-size: 0.85rem; font-weight: 500; color: var(--text); }
+  .flow-node-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; }
+  .flow-arrow {
+    width: 2.5rem; text-align: center;
+    color: var(--teal); font-size: 1.1rem; flex-shrink: 0;
+  }
+
+  /* ─── ROLES ─── */
+  .roles-section {
+    background: var(--bg-surface);
+    border-top: 0.5px solid var(--border);
+    border-bottom: 0.5px solid var(--border);
+  }
+  .roles-inner { max-width: 1100px; margin: 0 auto; }
+  .roles-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .role-card {
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: 8px; padding: 1.5rem;
+    text-align: center;
+  }
+  .role-initial {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--teal-dim);
+    border: 1px solid var(--border-teal);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--serif); font-size: 1.2rem; font-weight: 600; color: var(--teal-light);
+    margin: 0 auto 1rem;
+  }
+  .role-initial.amber {
+    background: var(--amber-dim); border-color: var(--border-amber); color: var(--amber-light);
+  }
+  .role-name { font-size: 0.9rem; font-weight: 500; color: var(--text); margin-bottom: 0.5rem; }
+  .role-skills { display: flex; flex-wrap: wrap; gap: 0.3rem; justify-content: center; }
+  .role-skill-tag {
+    font-size: 0.62rem; letter-spacing: 0.05em; font-weight: 500;
+    padding: 0.15rem 0.5rem; border-radius: 3px;
+    background: rgba(255,255,255,0.04); color: var(--text-muted);
+    border: 0.5px solid var(--border);
+  }
+
+  /* ─── CTA ─── */
+  .cta-section {
+    background: var(--bg);
+    text-align: center;
+    padding: 6rem 2rem;
+    position: relative; overflow: hidden;
+  }
+  .cta-glow {
+    position: absolute; width: 500px; height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(29,158,117,0.07), transparent 70%);
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .cta-inner { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; }
+  .cta-psi {
+    font-family: var(--serif); font-size: 3.5rem; font-weight: 300;
+    color: var(--teal); opacity: 0.4; line-height: 1;
+    margin-bottom: 1rem;
+  }
+  .cta-title {
+    font-family: var(--serif); font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 300; color: var(--text); line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+  .cta-sub { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 2.5rem; font-weight: 300; }
+  .cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--bg-surface);
+    border-top: 0.5px solid var(--border);
+    padding: 3rem 4rem;
+  }
+  .footer-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    flex-wrap: wrap; gap: 2rem;
+  }
+  .footer-brand-name {
+    font-family: var(--serif); font-size: 1.4rem; font-weight: 300; color: var(--text);
+    margin-bottom: 0.25rem;
+  }
+  .footer-brand-sub { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; }
+  .footer-links-col h4 {
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--text-faint);
+    margin-bottom: 0.75rem;
+  }
+  .footer-links-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+  .footer-links-col ul li a { font-size: 0.85rem; color: var(--text-muted); transition: color 0.2s; }
+  .footer-links-col ul li a:hover { color: var(--teal-light); }
+  .footer-bottom {
+    max-width: 1100px; margin: 2rem auto 0;
+    padding-top: 1.5rem; border-top: 0.5px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-bottom p { font-size: 0.78rem; color: var(--text-faint); }
+  .footer-bottom a { color: var(--teal); }
+
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .mission-band-inner { grid-template-columns: 1fr; }
+    .verticals-grid { grid-template-columns: 1fr 1fr; }
+    .how-grid { grid-template-columns: 1fr; }
+    .features-grid { grid-template-columns: 1fr; }
+    .feature-card.wide { grid-column: span 1; }
+    .roles-grid { grid-template-columns: 1fr 1fr; }
+    .flow-row { flex-wrap: wrap; gap: 0.5rem; }
+    footer { padding: 2rem 1.5rem; }
+  }
+  @media (max-width: 600px) {
+    .verticals-grid { grid-template-columns: 1fr; }
+    .roles-grid { grid-template-columns: 1fr 1fr; }
+    .hero-stats { gap: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <span class="nav-psi">Ψ</span>
+    <div class="nav-name">
+      <span>APSYLab</span>
+      <span>AiInPsychology · AIP</span>
+    </div>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#research">Research</a></li>
+    <li><a href="#community">Community</a></li>
+    <li><a href="#roles">Roles</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#join" class="nav-cta">Join the Lab</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-psi">Ψ</div>
+
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      Open to collaborators · 2025 cohort
+    </div>
+    <p class="hero-eyebrow">apsylab.org &nbsp;·&nbsp; AiInPsychology(Ψ)</p>
+    <h1 class="hero-title">
+      Where <em>minds</em><br>meet machines
+    </h1>
+    <p class="hero-subtitle">
+      A research lab where psychology students and engineers build together —
+      because the most important AI problems need both a human mind and a technical hand.
+    </p>
+    <div class="hero-actions">
+      <a href="#join" class="btn-primary">Join the Lab</a>
+      <a href="#research" class="btn-secondary">Explore Research</a>
+    </div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-num">6</div>
+      <div class="hero-stat-label">Research Verticals</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">∞</div>
+      <div class="hero-stat-label">Open Projects</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">2</div>
+      <div class="hero-stat-label">Disciplines United</div>
+    </div>
+  </div>
+</section>
+
+<!-- MISSION BAND -->
+<div class="mission-band">
+  <div class="mission-band-inner">
+    <div class="mission-quote">
+      "Psychology gives AI its <span>purpose</span>. Engineering gives psychology its <span>scale</span>."
+    </div>
+    <div class="mission-text">
+      APSYLab is an open research initiative under the non-profit <strong>AiInPsychology (AIP)</strong>.
+      We believe that the most meaningful AI systems — ones that genuinely serve people —
+      can only be built when the disciplines converge. This lab is the infrastructure for that convergence:
+      structured projects, shared tools, and a community fluent in both the science of mind and the science of machines.
+    </div>
+  </div>
+</div>
+
+<!-- RESEARCH VERTICALS -->
+<section id="research">
+  <div class="container">
+    <div class="section-label">Research</div>
+    <h2 class="section-title">Six verticals.<br>One shared mission.</h2>
+    <p class="section-desc">
+      Each vertical brings a different lens to human-centered AI. Projects span from early-stage hypothesis to deployed tools.
+    </p>
+
+    <div class="verticals-grid">
+
+      <div class="vertical-card">
+        <span class="vertical-num">01</span>
+        <div class="vertical-name">Cognitive Load &amp; UX</div>
+        <div class="vertical-desc">
+          Psych students audit interfaces for attention and memory load. Engineers instrument, A/B test, and iterate. Real research, real products.
+        </div>
+        <div class="vertical-tags">
+          <span class="vertical-tag">Attention</span>
+          <span class="vertical-tag">HCI</span>
+          <span class="vertical-tag amber">UX Testing</span>
+        </div>
+      </div>
+
+      <div class="vertical-card">
+        <span class="vertical-num">02</span>
+        <div class="vertical-name">Mental Health Tooling</div>
+        <div class="vertical-desc">
+          Chat-based interventions, mood tracking systems, and crisis detection pipelines built at the intersection of clinical insight and NLP.
+        </div>
+        <div class="vertical-tags">
+          <span class="vertical-tag">Clinical Psych</span>
+          <span class="vertical-tag amber">NLP</span>
+          <span class="vertical-tag">Crisis Detection</span>
+        </div>
+      </div>
+
+      <div class="vertical-card">
+        <span class="vertical-num">03</span>
+        <div class="vertical-name">Behavioral AI</div>
+        <div class="vertical-desc">
+          Bias detection, persuasion analysis in LLM outputs, emotion recognition, and understanding the psychology behind model-human interaction.
+        </div>
+        <div class="vertical-tags">
+          <span class="vertical-tag">Bias Detection</span>
+          <span class="vertical-tag amber">LLM Analysis</span>
+          <span class="vertical-tag">Ethics</span>
+        </div>
+      </div>
+
+      <div class="vertical-card">
+        <span class="vertical-num">04</span>
+        <div class="vertical-name">Neuro-data &amp; BCI</div>
+        <div class="vertical-desc">
+          EEG and fMRI pipelines, sleep stage classification, attention modeling, and brain-computer interface research grounded in neuroscience.
+        </div>
+        <div class="vertical-tags">
+          <span class="vertical-tag">EEG / fMRI</span>
+          <span class="vertical-tag">Sleep Research</span>
+          <span class="vertical-tag amber">BCI</span>
+        </div>
+      </div>
+
+      <div class="vertical-card">
+        <span class="vertical-num">05</span>
+        <div class="vertical-name">EdPsych &amp; EdTech</div>
+        <div class="vertical-desc">
+          Learning curve modeling, adaptive systems, retention research. Building educational tools informed by how people actually learn and forget.
+        </div>
+        <div class="vertical-tags">
+          <span class="vertical-tag">Learning Science</span>
+          <span class="vertical-tag amber">Adaptive AI</span>
+          <span class="vertical-tag">Memory</span>
+        </div>
+      </div>
+
+      <div class="vertical-card">
+        <span class="vertical-num">06</span>
+        <div class="vertical-name">Human-Computer Interaction</div>
+        <div class="vertical-desc">
+          Eye tracking studies, response latency experiments, interface perception research. Rigorous HCI with academic publication goals.
+        </div>
+        <div class="vertical-tags">
+          <span class="vertical-tag">Eye Tracking</span>
+          <span class="vertical-tag">Perception</span>
+          <span class="vertical-tag amber">Experiments</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="community" style="background: var(--bg-surface); border-top: 0.5px solid var(--border);">
+  <div class="container">
+    <div class="section-label">Community</div>
+    <h2 class="section-title">Two disciplines.<br>One workflow.</h2>
+    <p class="section-desc">APSYLab is structured so that both psych and engineering students contribute where they're strongest — and grow where they're weakest.</p>
+
+    <div class="how-grid">
+      <div class="how-card">
+        <div class="how-card-label teal">If you study Psychology</div>
+        <div class="how-card-title">You bring the "what" and "why"</div>
+        <ul class="how-steps">
+          <li class="how-step"><span class="how-step-num">1</span>Browse open project boards and post a research problem you care about</li>
+          <li class="how-step"><span class="how-step-num">2</span>Tag your background — clinical, cognitive, neuro, social, educational</li>
+          <li class="how-step"><span class="how-step-num">3</span>Get matched with an engineering collaborator or team</li>
+          <li class="how-step"><span class="how-step-num">4</span>Lead the research design, literature, and evaluation criteria</li>
+          <li class="how-step"><span class="how-step-num">5</span>Co-author outputs: papers, tools, or open datasets</li>
+        </ul>
+      </div>
+      <div class="how-card">
+        <div class="how-card-label amber">If you study Engineering / CS</div>
+        <div class="how-card-title">You bring the "how"</div>
+        <ul class="how-steps">
+          <li class="how-step"><span class="how-step-num">1</span>Browse posted problems or bring a technical idea needing a psych angle</li>
+          <li class="how-step"><span class="how-step-num">2</span>Tag your stack — ML, NLP, systems, frontend, data engineering</li>
+          <li class="how-step"><span class="how-step-num">3</span>Get matched with a psychology researcher or student</li>
+          <li class="how-step"><span class="how-step-num">4</span>Lead the implementation, infrastructure, and deployment</li>
+          <li class="how-step"><span class="how-step-num">5</span>Ship real tools with real users — not just side projects</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Research flow -->
+    <div class="flow-row">
+      <div class="flow-node">
+        <span class="flow-node-icon">📋</span>
+        <div class="flow-node-title">Problem posted</div>
+        <div class="flow-node-sub">Psych or CS student</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">
+        <span class="flow-node-icon">🤝</span>
+        <div class="flow-node-title">Team matched</div>
+        <div class="flow-node-sub">Role-based pairing</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">
+        <span class="flow-node-icon">🔬</span>
+        <div class="flow-node-title">Research begins</div>
+        <div class="flow-node-sub">Open lab notebook</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">
+        <span class="flow-node-icon">🚀</span>
+        <div class="flow-node-title">Output shipped</div>
+        <div class="flow-node-sub">Paper / tool / dataset</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- COMMUNITY FEATURES -->
+<section>
+  <div class="container">
+    <div class="section-label">Platform</div>
+    <h2 class="section-title">Built for serious<br>interdisciplinary work</h2>
+    <p class="section-desc">The tools and community infrastructure that make cross-discipline research actually happen.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon-wrap">⚑</div>
+        <div class="feature-title">Open Project Boards</div>
+        <div class="feature-desc">Post a research problem, browse open ones. Like GitHub Issues but for interdisciplinary science. Problems are tagged by vertical, difficulty, and required disciplines.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrap">◉</div>
+        <div class="feature-title">Role Tagging &amp; Matching</div>
+        <div class="feature-desc">Tag what you bring: "I speak clinical psych + statistical modeling" or "I do NLP + backend infrastructure." The system finds your complement.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrap">◈</div>
+        <div class="feature-title">Reading Rooms</div>
+        <div class="feature-desc">Shared paper discussion threads where both disciplines annotate from their lens. A clinical psychologist and an ML engineer reading the same paper see very different things — that gap is where insight lives.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon-wrap">↑</div>
+        <div class="feature-title">Mentorship Tracks</div>
+        <div class="feature-desc">Undergrads connected with grad students and practitioners who've crossed both worlds. Structured mentorship within each research vertical.</div>
+      </div>
+      <div class="feature-card wide">
+        <div class="feature-icon-wrap">≡</div>
+        <div class="feature-title">Public Lab Notebooks</div>
+        <div class="feature-desc">Every project maintains an open research log — methodology, dead ends, partial results. Public by default. This isn't just transparency — it's how you build credibility before you publish, attract collaborators mid-project, and contribute to a culture of honest science. The notebook is the research record, not just the paper.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROLES -->
+<section class="roles-section" id="roles">
+  <div class="roles-inner" style="padding: 6rem 2rem;">
+    <div class="section-label">Who belongs here</div>
+    <h2 class="section-title">Every role has a seat.</h2>
+    <p class="section-desc">APSYLab is for anyone serious about the intersection. Here's what collaboration looks like across disciplines.</p>
+
+    <div class="roles-grid">
+      <div class="role-card">
+        <div class="role-initial">Ψ</div>
+        <div class="role-name">Clinical Psychologist</div>
+        <div class="role-skills">
+          <span class="role-skill-tag">DSM Fluency</span>
+          <span class="role-skill-tag">CBT Frameworks</span>
+          <span class="role-skill-tag">Research Design</span>
+        </div>
+      </div>
+      <div class="role-card">
+        <div class="role-initial amber">∇</div>
+        <div class="role-name">ML Engineer</div>
+        <div class="role-skills">
+          <span class="role-skill-tag">PyTorch / TF</span>
+          <span class="role-skill-tag">NLP Pipelines</span>
+          <span class="role-skill-tag">Model Evals</span>
+        </div>
+      </div>
+      <div class="role-card">
+        <div class="role-initial">σ</div>
+        <div class="role-name">Cognitive Scientist</div>
+        <div class="role-skills">
+          <span class="role-skill-tag">Memory Models</span>
+          <span class="role-skill-tag">Perception</span>
+          <span class="role-skill-tag">EEG Literacy</span>
+        </div>
+      </div>
+      <div class="role-card">
+        <div class="role-initial amber">⌘</div>
+        <div class="role-name">Systems / DevOps</div>
+        <div class="role-skills">
+          <span class="role-skill-tag">Data Infra</span>
+          <span class="role-skill-tag">Kubernetes</span>
+          <span class="role-skill-tag">Observability</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="join">
+  <div class="cta-glow"></div>
+  <div class="cta-inner">
+    <div class="cta-psi">Ψ</div>
+    <h2 class="cta-title">Ready to bring your mind to the machine?</h2>
+    <p class="cta-sub">
+      APSYLab is open to students, researchers, and practitioners across psychology and engineering. No gatekeeping. Serious work only.
+    </p>
+    <div class="cta-actions">
+      <a href="mailto:lab@apsylab.org" class="btn-primary">Apply to Join</a>
+      <a href="mailto:collaborate@apsylab.org" class="btn-secondary">Propose a Project</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand-name">APSYLab · Ψ</div>
+      <div class="footer-brand-sub">AiInPsychology (AIP) · Non-profit</div>
+    </div>
+    <div class="footer-links-col">
+      <h4>Research</h4>
+      <ul>
+        <li><a href="#">Cognitive Load &amp; UX</a></li>
+        <li><a href="#">Mental Health Tooling</a></li>
+        <li><a href="#">Behavioral AI</a></li>
+        <li><a href="#">Neuro-data &amp; BCI</a></li>
+        <li><a href="#">EdPsych &amp; EdTech</a></li>
+        <li><a href="#">HCI Research</a></li>
+      </ul>
+    </div>
+    <div class="footer-links-col">
+      <h4>Community</h4>
+      <ul>
+        <li><a href="#">Project Boards</a></li>
+        <li><a href="#">Reading Rooms</a></li>
+        <li><a href="#">Mentorship</a></li>
+        <li><a href="#">Lab Notebooks</a></li>
+      </ul>
+    </div>
+    <div class="footer-links-col">
+      <h4>Lab</h4>
+      <ul>
+        <li><a href="#">About AIP</a></li>
+        <li><a href="#">Publications</a></li>
+        <li><a href="#">Open Datasets</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 APSYLab · <a href="https://apsylab.org">apsylab.org</a> · AiInPsychology (AIP)</p>
+    <p style="color: var(--text-faint); font-size: 0.72rem;">Engineer with a Human Mind.</p>
+  </div>
+</footer>
+
+</body>
+</html>
