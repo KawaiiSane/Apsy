@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { AuthButton } from "@/components/layout/AuthButton";
 
 const links = [
   { href: "/#research", label: "Research" },
@@ -7,7 +10,9 @@ const links = [
   { href: "/workspace", label: "Workspace" },
 ];
 
-export function Navbar() {
+export async function Navbar() {
+  const session = await getServerSession(authOptions);
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between border-b border-[var(--color-border)] bg-white/85 px-6 py-4 backdrop-blur-lg md:px-16">
       <Link href="/" className="flex items-center gap-3">
@@ -33,6 +38,9 @@ export function Navbar() {
           </li>
         ))}
         <li>
+          <AuthButton session={session} />
+        </li>
+        <li>
           <Link
             href="/workspace"
             className="rounded bg-[var(--color-teal)] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--color-teal-light)]"
@@ -41,12 +49,15 @@ export function Navbar() {
           </Link>
         </li>
       </ul>
-      <Link
-        href="/workspace"
-        className="rounded bg-[var(--color-teal)] px-4 py-2 text-sm font-medium text-white md:hidden"
-      >
-        Workspace
-      </Link>
+      <div className="flex items-center gap-3 md:hidden">
+        <AuthButton session={session} compact />
+        <Link
+          href="/workspace"
+          className="rounded bg-[var(--color-teal)] px-4 py-2 text-sm font-medium text-white"
+        >
+          Workspace
+        </Link>
+      </div>
     </nav>
   );
 }

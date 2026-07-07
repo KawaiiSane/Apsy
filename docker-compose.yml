@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: apsylab
+      POSTGRES_PASSWORD: apsylab
+      POSTGRES_DB: apsylab
+    volumes:
+      - apsylab_pgdata:/var/lib/postgresql/data
+
+volumes:
+  apsylab_pgdata:

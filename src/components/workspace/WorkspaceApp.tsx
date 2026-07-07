@@ -19,10 +19,8 @@ import {
 } from "@/lib/constants";
 import {
   createItem,
-  loadWorkspace,
-  saveWorkspace,
 } from "@/lib/workspace-storage";
-import type { Discipline, ItemStatus, ItemType, WorkspaceItem } from "@/lib/types";
+import type { Discipline, ItemStatus, ItemType, WorkspaceData, WorkspaceItem } from "@/lib/types";
 
 const TYPE_ICONS = {
   project: FolderKanban,
@@ -36,24 +34,51 @@ export function WorkspaceApp() {
   const [filter, setFilter] = useState<"all" | Discipline>("all");
   const [showForm, setShowForm] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
-    const data = loadWorkspace();
-    setItems(data.items);
-    setStudentName(data.studentName);
-    setHydrated(true);
+    fetch("/api/workspace")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to load workspace");
+        return res.json() as Promise<WorkspaceData>;
+      })
+      .then((data) => {
+        setItems(data.items);
+        setStudentName(data.studentName);
+        setHydrated(true);
+      })
+      .catch(() => {
+        setLoadError("Could not load your workspace. Please refresh the page.");
+        setHydrated(true);
+      });
   }, []);
 
   const persist = useCallback(
-    (nextItems: WorkspaceItem[], name = studentName) => {
+    async (nextItems: WorkspaceItem[], name = studentName) => {
       setItems(nextItems);
-      saveWorkspace({ items: nextItems, studentName: name });
+      setStudentName(name);
+      setSaveError(null);
+
+      try {
+        const res = await fetch("/api/workspace", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ items: nextItems, studentName: name }),
+        });
+
+        if (!res.ok) {
+          throw new Error("Save failed");
+        }
+      } catch {
+        setSaveError("Could not save changes. Please try again.");
+      }
     },
     [studentName]
   );
 
   const handleNameBlur = () => {
-    saveWorkspace({ items, studentName });
+    void persist(items, studentName);
   };
 
   const addItem = (form: FormData) => {
@@ -119,8 +144,21 @@ export function WorkspaceApp() {
     );
   }
 
+  if (loadError) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center px-6 text-center text-[var(--color-text-muted)]">
+        {loadError}
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
+      {saveError && (
+        <div className="border-b border-red-200 bg-red-50 px-6 py-2 text-center text-sm text-red-700">
+          {saveError}
+        </div>
+      )}
       <header className="border-b border-[var(--color-border)] bg-white">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4">
           <div className="flex items-center gap-4">
